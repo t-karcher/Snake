@@ -1,0 +1,64 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Main.gd" type="Script" id=1]
+[ext_resource path="res://Snake.gd" type="Script" id=2]
+
+[sub_resource type="RectangleShape2D" id=5]
+extents = Vector2( 14, 14 )
+
+[node name="Main" type="Node2D"]
+script = ExtResource( 1 )
+
+[node name="Border" type="StaticBody2D" parent="."]
+position = Vector2( -1, -1 )
+
+[node name="Shape" type="Line2D" parent="Border"]
+points = PoolVector2Array( 32, 32, 992, 32, 992, 576, 32, 576, 32, 32 )
+width = 32.0
+default_color = Color( 0.0980392, 0.564706, 0.843137, 1 )
+texture_mode = 1068498944
+joint_mode = 2
+begin_cap_mode = 2
+
+[node name="Top" type="CollisionPolygon2D" parent="Border"]
+polygon = PoolVector2Array( 17, 17, 49, 49, 977, 49, 1009, 17 )
+
+[node name="Right" type="CollisionPolygon2D" parent="Border"]
+polygon = PoolVector2Array( 1009, 593, 977, 561, 977, 49, 1009, 17 )
+
+[node name="Bottom" type="CollisionPolygon2D" parent="Border"]
+polygon = PoolVector2Array( 49, 561, 977, 561, 1009, 593, 17, 593 )
+
+[node name="Left" type="CollisionPolygon2D" parent="Border"]
+polygon = PoolVector2Array( 49, 561, 17, 593, 17, 17, 49, 49 )
+
+[node name="Snake" type="KinematicBody2D" parent="."]
+position = Vector2( 128, 128 )
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Collider" type="CollisionShape2D" parent="Snake"]
+shape = SubResource( 5 )
+
+[node name="Shape" type="Polygon2D" parent="Snake"]
+color = Color( 0.831373, 0.101961, 0.101961, 1 )
+polygon = PoolVector2Array( -16, -16, 16, -16, 16, 16, -16, 16 )
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.1
+
+[node name="Menu" type="Node2D" parent="."]
+scale = Vector2( 2, 2 )
+z_index = 1
+
+[node name="Label" type="Label" parent="Menu"]
+margin_right = 504.0
+margin_bottom = 296.0
+text = "Welcome to Snake
+
+Press space bar to start the game"
+align = 1
+valign = 1
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
