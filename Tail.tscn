@@ -9,5 +9,5 @@ extents = Vector2( 14, 14 )
 shape = SubResource( 1 )
 
 [node name="BodyShape" type="Polygon2D" parent="."]
-color = Color( 0.854902, 0.113725, 0.113725, 1 )
+color = Color( 0.854902, 0.772549, 0.113725, 1 )
 polygon = PoolVector2Array( -16, -16, 16, -16, 16, 16, -16, 16 )

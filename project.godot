@@ -18,7 +18,3 @@ _global_script_class_icons={
 config/name="Snake"
 run/main_scene="res://Main.tscn"
 config/grid_size=32
-
-[rendering]
-
-environment/default_environment="res://default_env.tres"
