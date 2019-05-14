@@ -1,54 +1,53 @@
 extends Node2D
 
-signal reset_game
-
 var tail = preload("res://Tail.tscn")
-var food = preload("res://Food.tscn")
 
-var next_dir : Vector2
-var tail_length : int
-
-func spawn_food():
-	var _food = food.instance()
-	add_child(_food)
-	_food.connect("food_was_eaten", self, "_on_Food_was_eaten")
-	self.connect("reset_game", _food, "queue_free")
-	
-func _on_Food_was_eaten():
-	tail_length += 1
-	call_deferred("spawn_food")
+var snake_dir : Vector2
+var next_dirs = []
+var prev_pos : Vector2
+var tail_nodes = []
 
 func _on_Timer_timeout():
-	var prev_snake_pos = $Snake.position
-	if $Snake.move_to(next_dir):
-		var _tail = tail.instance()
-		add_child(_tail)
-		_tail.set_position(prev_snake_pos)
-		$Timer.connect("timeout", _tail, "_on_Timer_timeout")
-		self.connect("reset_game", _tail, "queue_free")
+	var next_dir : Vector2 = snake_dir
+	while next_dirs.size() > 0 and next_dir == snake_dir:
+		next_dir = next_dirs.pop_front()
+	if next_dir + snake_dir != Vector2.ZERO: snake_dir = next_dir
+	prev_pos = $Snake.position
+	if !is_instance_valid($Snake.move_and_collide (snake_dir)):
+		if tail_nodes.size() > 0:
+			tail_nodes.push_front(tail_nodes.pop_back())
+			tail_nodes[0].set_position(prev_pos)
 	else:
 		stop_game()
 	
 func _input(event):
-	if event.is_action_pressed("ui_up"): next_dir = Vector2 (0, -32)
-	if event.is_action_pressed("ui_down"): next_dir = Vector2 (0, 32) 
-	if event.is_action_pressed("ui_left"): next_dir = Vector2 (-32, 0)
-	if event.is_action_pressed("ui_right"): next_dir = Vector2 (32, 0)
-	
 	if event.is_action_pressed("ui_accept") and $Timer.is_stopped():
 		 start_game()
+	if event.is_action_pressed("ui_up"): next_dirs.append (Vector2 (0, -32))
+	if event.is_action_pressed("ui_down"): next_dirs.append (Vector2 (0, 32)) 
+	if event.is_action_pressed("ui_left"): next_dirs.append (Vector2 (-32, 0))
+	if event.is_action_pressed("ui_right"): next_dirs.append (Vector2 (32, 0))
 
 func start_game():
+	$Snake.set_position (Vector2 (128, 128))
+	snake_dir = Vector2 (32, 0)
+	next_dirs.clear()
+	for n in tail_nodes: n.queue_free()
+	tail_nodes.clear()
+	$Food.set_position(Vector2(rand_range(48, 977), rand_range(48, 561)).snapped(Vector2(32, 32)))
+	$Food/Label.text = "1"
 	$Menu.hide()
-	emit_signal("reset_game")
-	$Snake.position = Vector2 (128, 128)
-	$Snake.cur_dir = Vector2 (32, 0)
-	next_dir = Vector2 (32, 0)
-	tail_length = 3
 	$Timer.start()
-	for n in range (3): spawn_food()
 
 func stop_game():
 	$Timer.stop()
 	$Menu/Label.text = "Game Over\n\nPress space bar to restart"
 	$Menu.show()
+	
+func _on_Food_body_entered(body):
+	if body == $Snake:
+		tail_nodes.append(tail.instance())
+		call_deferred("add_child", tail_nodes[-1])
+		$Food/Label.text = str(tail_nodes.size() + 1)
+	$Food.set_position(Vector2(rand_range(48, 977), rand_range(48, 561)).snapped(Vector2(32, 32)))
+

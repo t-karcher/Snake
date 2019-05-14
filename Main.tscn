@@ -1,9 +1,11 @@
 [gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
-[ext_resource path="res://Snake.gd" type="Script" id=2]
 
-[sub_resource type="RectangleShape2D" id=5]
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 14, 14 )
+
+[sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 14, 14 )
 
 [node name="Main" type="Node2D"]
@@ -20,27 +22,14 @@ texture_mode = 1068498944
 joint_mode = 2
 begin_cap_mode = 2
 
-[node name="Top" type="CollisionPolygon2D" parent="Border"]
-polygon = PoolVector2Array( 17, 17, 49, 49, 977, 49, 1009, 17 )
-
-[node name="Right" type="CollisionPolygon2D" parent="Border"]
-polygon = PoolVector2Array( 1009, 593, 977, 561, 977, 49, 1009, 17 )
-
-[node name="Bottom" type="CollisionPolygon2D" parent="Border"]
-polygon = PoolVector2Array( 49, 561, 977, 561, 1009, 593, 17, 593 )
-
-[node name="Left" type="CollisionPolygon2D" parent="Border"]
-polygon = PoolVector2Array( 49, 561, 17, 593, 17, 17, 49, 49 )
+[node name="Collider" type="CollisionPolygon2D" parent="Border"]
+polygon = PoolVector2Array( 1009, 593, 17, 593, 17, 17, 977, 17, 977, 49, 49, 49, 49, 561, 977, 561, 977, 49, 1009, 49 )
 
 [node name="Snake" type="KinematicBody2D" parent="."]
 position = Vector2( 128, 128 )
-script = ExtResource( 2 )
-__meta__ = {
-"_edit_group_": true
-}
 
 [node name="Collider" type="CollisionShape2D" parent="Snake"]
-shape = SubResource( 5 )
+shape = SubResource( 1 )
 
 [node name="Shape" type="Polygon2D" parent="Snake"]
 color = Color( 0.831373, 0.101961, 0.101961, 1 )
@@ -61,4 +50,25 @@ text = "Welcome to Snake
 Press space bar to start the game"
 align = 1
 valign = 1
+
+[node name="Food" type="Area2D" parent="."]
+editor/display_folded = true
+position = Vector2( 240, 464 )
+
+[node name="Shape" type="Polygon2D" parent="Food"]
+color = Color( 0.152941, 0.392157, 0.0784314, 1 )
+polygon = PoolVector2Array( -16, -16, 16, -16, 16, 16, -16, 16 )
+
+[node name="Collider" type="CollisionShape2D" parent="Food"]
+shape = SubResource( 2 )
+
+[node name="Label" type="Label" parent="Food"]
+margin_left = -16.0
+margin_top = -16.0
+margin_right = 16.0
+margin_bottom = 16.0
+text = "1"
+align = 1
+valign = 1
 [connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
+[connection signal="body_entered" from="Food" to="." method="_on_Food_body_entered"]

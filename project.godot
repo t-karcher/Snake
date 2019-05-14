@@ -17,12 +17,7 @@ _global_script_class_icons={
 
 config/name="Snake"
 run/main_scene="res://Main.tscn"
-config/icon="res://icon.png"
 config/grid_size=32
-
-[autoload]
-
-globals="*res://globals.gd"
 
 [rendering]
 
